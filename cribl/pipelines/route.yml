@@ -1,0 +1,39 @@
+id: default
+groups: {}
+comments: []
+routes:
+  - id: hjancb
+    name: URL rewrite vulnerability
+    final: false
+    disabled: true
+    pipeline: PipelineForHTTPHeaders
+    description: Detect URL rewrite vulnerability
+    clones:
+      - {}
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __inputId=='appscope:in_appscope'
+    output: LocalOutputTCP
+  - id: mDAse7
+    name: Fat GET Request
+    final: true
+    disabled: false
+    pipeline: GetFATRequest
+    description: Detect Fat GET Request
+    clones:
+      - {}
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __inputId=='appscope:in_appscope'
+    output: LocalOutputTCP
+  - id: default
+    name: default
+    final: true
+    disabled: false
+    pipeline: main
+    description: ""
+    clones: []
+    enableOutputExpression: false
+    outputExpression: null
+    filter: "true"
+    output: default

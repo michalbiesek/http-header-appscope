@@ -1,0 +1,68 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep: []
+      remove:
+        - data_http_status_text
+        - sourcetype
+        - source
+        - proc
+        - pid
+        - host
+        - cmd
+        - time
+        - data_http_method
+        - data_http_target
+        - data_http_scheme
+        - data_http_stream
+        - data_http_flavor
+        - data_http_status_code
+        - data_http_client_duration
+        - data_http_server_duration
+        - data_http_host
+        - data_http_user_agent
+        - data_net_transport
+        - data_net_peer_ip
+        - data_net_peer_port
+        - data_net_host_ip
+        - data_net_host_port
+        - data_http_response_content_length
+        - data_http_frame
+        - data_http_client_ip
+    description: Extract field different then in JSON Schema
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add: []
+      remove:
+        - data_*
+      keep:
+        - data_X-*
+    description: Remove everything besides X fields
+  - id: rename
+    filter: "true"
+    disabled: false
+    conf:
+      wildcardDepth: 5
+      renameExpr: name.replace(/data_/, '')
+      rename: []
+  - id: code
+    filter: "true"
+    disabled: false
+    conf:
+      maxNumOfIterations: 5000
+      code: >-
+        if (Object.keys(__e).some(k =>
+        k.toLowerCase().startsWith('x-original-url'))) {
+            __e.error_orig = 'x-original-url detected'
+        }
+
+        if (Object.keys(__e).some(k => k.toLowerCase().startsWith('x-rewrite-url'))) {
+            __e.error_rew = 'X-Rewrite-URL detected'
+        }

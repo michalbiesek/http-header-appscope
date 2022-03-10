@@ -1,0 +1,56 @@
+version: '2.2'
+services:
+
+  service1:
+    container_name: service1
+    build: service1
+    environment:
+      SCOPE_EVENT_METRIC: "false"
+      SCOPE_EVENT_HTTP: "true"
+      SCOPE_EVENT_HTTP_HEADER: ".*"
+      SCOPE_EVENT_NET: "false"
+      SCOPE_EVENT_FS: "false"
+      SCOPE_CRIBL_ENABLE: "false"
+      SCOPE_METRIC_ENABLE: "false"
+      SCOPE_EVENT_CONSOLE: "false"
+      SCOPE_EVENT_DEST: "${APPSCOPE_DEST:-tcp://cribl01:10092}"
+      SCOPE_TAG_container_name: "service1"
+    command: ["./ldscope", "--", "python3", "-m", "http.server", "${SERVICE_1_PORT:-1234}"]
+    networks:
+      - service1
+      - web
+
+  client_normal:
+    container_name: client_normal
+    build : client
+    command: ["python3", "main.py", "--variant", "valid_req", "--dest", "service1:${SERVICE_1_PORT:-1234}"]
+    networks:
+      - web
+
+  client_attacker1:
+    container_name: client_attacker1
+    build : client
+    command: ["python3", "main.py", "--variant", "header_invalid", "--dest", "service1:${SERVICE_1_PORT:-1234}"]
+    networks:
+      - web
+
+  client_attacker2:
+    container_name: client_attacker2
+    build : client
+    command: ["python3", "main.py", "--variant", "get_req_body", "--dest", "service1:${SERVICE_1_PORT:-1234}"]
+    networks:
+      - web
+
+  cribl01:
+    image: "cribl/cribl:${CRIBL_VERSION:-3.3.1}"
+    container_name: cribl01
+    ports:
+      - "${CRIBL_HOST_PORT:-9000}:9000"
+    networks:
+      - service1
+
+networks:
+  web:
+    driver: bridge
+  service1:
+    driver: bridge

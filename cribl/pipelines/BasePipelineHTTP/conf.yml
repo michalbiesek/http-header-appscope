@@ -1,0 +1,18 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: drop
+    filter: sourcetype!='http' && source!='http.req' && source!='http.resp'
+    disabled: null
+    conf: {}
+    description: FIlter http request
+  - id: flatten
+    filter: "true"
+    disabled: null
+    conf:
+      fields: []
+      prefix: ""
+      depth: 5
+      delimiter: _
+    description: Flatten the http request and http response

@@ -1,0 +1,18 @@
+outputs:
+  LocalOutputTCP:
+    systemFields:
+      - cribl_pipe
+    streamtags: []
+    loadBalanced: false
+    compression: none
+    throttleRatePerSec: "0"
+    tls:
+      disabled: true
+    connectionTimeout: 10
+    writeTimeout: 60
+    onBackpressure: block
+    authType: manual
+    authToken: ""
+    type: tcpjson
+    host: 127.0.0.1
+    port: 10090
