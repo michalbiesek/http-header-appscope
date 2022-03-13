@@ -6,6 +6,7 @@ import argparse
 
 ARG_DEST = 'dest'
 ARG_VARIANT = 'variant'
+TIMEOUT = 3
 
 class ReqVariant(enum.Enum):
     VALID_REQ = "valid_req"
@@ -21,6 +22,9 @@ class HttpReqProducer:
         self.variant = cli_cfg[ARG_VARIANT]
 
     def send_get_request_var(self) -> None:
+        """
+        Send `GET` request
+        """
         header = None
         if self.variant == ReqVariant.GET_REQ_BODY:
             try:
@@ -41,7 +45,7 @@ class HttpReqProducer:
     def send_loop(self) -> None:
         while(True):
             self.send_get_request_var()
-            sleep(3)
+            sleep(TIMEOUT)
 
 def main() -> None:
     """

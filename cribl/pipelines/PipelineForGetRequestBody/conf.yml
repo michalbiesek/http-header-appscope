@@ -25,7 +25,7 @@ functions:
         - _time
       add:
         - name: vulnerability
-          value: "'HTTP GET Request with body length = ' +
+          value: "'Vulnerability detected HTTP GET Request with body length = ' +
             data_http_request_content_length"
     description: Detect vulnerability
 description: Detect content in GET

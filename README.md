@@ -1,12 +1,11 @@
 # http-header-appscope
 
 
-This demo presents observabiliy setup based on AppScope and Logstream.
+This demo presents observability setup based on AppScope and Logstream used for detection 
 
 Let's focus on simple client-server communication 
 
 ![Schema_overall](pic1.png)
-
 
 In context of control/observability we can say that:
 
@@ -17,25 +16,37 @@ In context of control/observability we can say that:
 | Server Response 	| Yes                                  	| Yes                                      	|
 | Server          	| Yes                                  	| Yes                                      	|
 
-As we can see we are able to get informations from interface channels `Request` and `Response` I will prove that from the
-information retrieved byt the `AppScope` and analyzed by the
-`Stream` we can detect potential vulnerability related to HTTP headers.
+As we can see we are able to get information from interface channels presented as `Request` and `Response`.
+The expected purpose of interface channels is to exchange information between server side and external world - but since it is a way to it is natural source of vector attacks.
 
+I will prove that from the information retrieved byt the `AppScope` and analyzed/transformed by the
+`LogStream` we can detect potential security vulnerability e.g. related to HTTP headers:
+
+- [CVE-2018-14773](https://nvd.nist.gov/vuln/detail/CVE-2018-14773)
 - [GET request bodies](https://developers.cloudflare.com/cache/best-practices/avoid-web-poisoning/#do-not-trust-get-request-bodies)
-- CVE-2018-14773
 
-The detection part can be done on Server side but:
+Identification of the problems mentioned above can be done on `Server` side **BUT** there are several advantage of solution based on separate component:
 
-- the server implemenation can be changed
-- server side can scaled up
-- we don't want to waste server memory&CPU rersources for the detection
-- we want to have robust mechanism which can be used on different application as well
+- `Robustness` - `Server` implementation can be replaced/changed/updated and the detection of the potential issue can be missed after previously mentioned operation.
+- `Availability of resources` - we don't want to waste `Server` memory & CPU for the detection of securtity flaws.
+- `Scalability` - since we have defined rules the detection scheme can be used for different services running in our organization.
 
-The Stream logic is presented below based on Fan Out & Fan In solution
+The first approach which comes natural  my mind is a `Fan Out & Fan In` solution to model security vulnerability and apply it  variety rules 
 
 ![Fan_in_Fan_out](pic2.png)
 
+Comparing idea above to [LogStream](https://docs.cribl.io/assets/images/Cribl-diagram-complex-3.0c-5398281873041df2a7ec0e404b9f2bef.png)
 
+The `Logstream` pipeline looks as a natural solution to the solution to the problem above:
+
+![Solution](pic3.png)
+
+AppScope scope the `Server` described as `service1` in docker.compose.yml file.
+Client generates three type of message:
+
+- valid one
+- one for CVE-2018-14773
+- one for GET request bodies
 ## Contents
 1. [Prerequisites](#prerequisites)
 2. [Intro](#intro)
@@ -44,16 +55,12 @@ The Stream logic is presented below based on Fan Out & Fan In solution
 3. [Building and Running](#building-and-running)
 	* [Build Demo](#build-demo)
 	* [Testing](#testing)
-	* [Scoping the bash session](#scoping-the-bash-session)
-	* [Scoping on demand](#scoping-on-demand)
 	* [Clean up Demo](#clean-up-demo)
 
 ## Prerequisites
-For this demo environment, you will need Docker, `bash` and a `curl`.
+For this demo environment, you will need Docker and a `bash`.
 
-
-This demo shows how vulnerabily can be catched
-
+This demo shows how HTTP vulnerability can be detected using data gatherred from AppScope and Logstream possibilities
 
 ## Overview
 
@@ -61,7 +68,6 @@ This demo environment uses:
 
 - [AppScope](https://appscope.dev/) to instrument application running in demo environment.
 - [Logstream](https://cribl.io/logstream/) as a agent
-- [Monitoring server] is based on TCP Monitoring on stream
 
 By default services will be available on following URL:
 
@@ -71,31 +77,9 @@ By default services will be available on following URL:
 
 If you need some custom values please modify `.env` file.
 
-
 ## Logstream configuration
 
 The diagram below depicts the Logstream configuration
-
-
-## Building and Running
-
-The demo provides two interfaces:
-- scoping the bash session `appscope01`
-- scoping individual command `appscope02`
-
-- running AppScope on host
-To extend the functionality by using AppScope on host, please extend the ports settings in
-`cribl01` configuration with following:
-
-```
-  cribl01:
-    ...
-    ports:
-      - "${CRIBL_HOST_PORT:-9000}:9000"
-      - 10070:10070
-```
-
-Set destination path to `tcp://127.0.0.1:10070` allows sending data to the observability setup.
 
 ## Build Demo
 
@@ -113,8 +97,19 @@ To confirm that everything works correctly:
 docker ps
 ```
 
-TODO FILL THIS
+```
+9032d27b82ef   http-header-appscope_client_attacker1   "python3 main.py --v…"   About a minute ago   Up About a minute                                               client_attacker1
+375a0ca25f0b   http-header-appscope_client_normal      "python3 main.py --v…"   About a minute ago   Up About a minute                                               client_normal
+79434ee018cd   http-header-appscope_service1           "./ldscope -- python…"   About a minute ago   Up About a minute                                               service1
+917b435934dc   http-header-appscope_client_attacker2   "python3 main.py --v…"   About a minute ago   Up About a minute                                               client_attacker2
+e2897e7e5cda   cribl/cribl:3.3.1                       "/sbin/entrypoint.sh…"   About a minute ago   Up About a minute   0.0.0.0:9000->9000/tcp, :::9000->9000/tcp   cribl01
+```
 
+Proceed to:
+
+http://localhost:9000/inputs/tcpjson/in_tcp_json?tab=live
+
+To observe the results of simulation.
 
 ## Clean up Demo
 
