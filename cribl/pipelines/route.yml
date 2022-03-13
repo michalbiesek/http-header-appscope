@@ -5,7 +5,7 @@ routes:
   - id: hjancb
     name: URL rewrite vulnerability
     final: false
-    disabled: true
+    disabled: false
     pipeline: PipelineForHTTPHeaders
     description: Detect URL rewrite vulnerability
     clones:
@@ -15,11 +15,11 @@ routes:
     filter: __inputId=='appscope:in_appscope'
     output: LocalOutputTCP
   - id: mDAse7
-    name: Fat GET Request
+    name: GET Request body vulnerability
     final: true
     disabled: false
-    pipeline: GetFATRequest
-    description: Detect Fat GET Request
+    pipeline: PipelineForGetRequestBody
+    description: Detect GET Request body vulnerability
     clones:
       - {}
     enableOutputExpression: false

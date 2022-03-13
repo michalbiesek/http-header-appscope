@@ -1,0 +1,10 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: drop
+    filter: __e.vulnerability === ""
+    disabled: null
+    conf: {}
+    description: Remove all events without vulnerability detected
+description: Drop event if vulnerability is not detected

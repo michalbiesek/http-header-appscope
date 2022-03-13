@@ -1,0 +1,31 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: drop
+    filter: source != `http.req`
+    disabled: null
+    conf: {}
+    final: false
+    description: Filter only get response
+  - id: drop
+    filter: "!data_http_request_content_length"
+    disabled: null
+    conf: {}
+    description: Filter only get response
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      remove:
+        - "*"
+      keep:
+        - vulnerability
+        - container_name
+        - _time
+      add:
+        - name: vulnerability
+          value: "'HTTP GET Request with body length = ' +
+            data_http_request_content_length"
+    description: Detect vulnerability
+description: Detect content in GET

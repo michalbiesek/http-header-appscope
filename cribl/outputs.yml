@@ -1,7 +1,6 @@
 outputs:
   LocalOutputTCP:
-    systemFields:
-      - cribl_pipe
+    systemFields: []
     streamtags: []
     loadBalanced: false
     compression: none
@@ -15,4 +14,5 @@ outputs:
     authToken: ""
     type: tcpjson
     host: 127.0.0.1
-    port: 10090
+    port: 10100
+    pipeline: PipelineForDropEmptyVuln

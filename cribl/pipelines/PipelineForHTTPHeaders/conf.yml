@@ -44,7 +44,7 @@ functions:
         - data_*
       keep:
         - data_X-*
-    description: Remove everything besides X fields
+    description: Remove everything besides X- HTTP header fields
   - id: rename
     filter: "true"
     disabled: false
@@ -58,11 +58,19 @@ functions:
     conf:
       maxNumOfIterations: 5000
       code: >-
-        if (Object.keys(__e).some(k =>
-        k.toLowerCase().startsWith('x-original-url'))) {
-            __e.error_orig = 'x-original-url detected'
+        __e.vulnerability = ''
+
+        if (Object.keys(__e).some(k => k.toLowerCase().startsWith('x-original-url'))) {
+            if (__e.vulnerability !== "") {
+                __e.vulnerability +=', '
+            }
+            __e.vulnerability +='x-original-url detected'
         }
 
         if (Object.keys(__e).some(k => k.toLowerCase().startsWith('x-rewrite-url'))) {
-            __e.error_rew = 'X-Rewrite-URL detected'
+           if (__e.vulnerability !== "") {
+                __e.vulnerability +=', '
+            }
+            __e.vulnerability +='x-rewrite-url detected'
         }
+    description: Create vulnerability information string

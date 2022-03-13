@@ -12,7 +12,7 @@ inputs:
     authType: manual
     authToken: ""
     type: tcpjson
-    port: 10090
+    port: 10100
   in_appscope:
     disabled: false
     sendToRoutes: true
@@ -29,4 +29,4 @@ inputs:
     host: 0.0.0.0
     type: appscope
     port: 10092
-    pipeline: BasePipelineHTTP
+    pipeline: PipelineForHTTPCom

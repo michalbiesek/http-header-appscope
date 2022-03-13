@@ -6,7 +6,7 @@ functions:
     filter: sourcetype!='http' && source!='http.req' && source!='http.resp'
     disabled: null
     conf: {}
-    description: FIlter http request
+    description: Filter only http request
   - id: flatten
     filter: "true"
     disabled: null
