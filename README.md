@@ -9,12 +9,12 @@ Let's focus on simple client-server communication
 
 In context of control/observability we can say that:
 
-|    Component    	| Can be observed by the `Server` side 	| Is fully controlled by the `Server` side 	|
-|:---------------:	|--------------------------------------	|:----------------------------------------:	|
-| Client          	| No                                   	| No                                       	|
-| Client Request  	| Yes                                  	| No                                       	|
-| Server Response 	| Yes                                  	| Yes                                      	|
-| Server          	| Yes                                  	| Yes                                      	|
+|    Component    | Can be observed by the `Server` side | Is fully controlled by the `Server` side |
+|:---------------:|--------------------------------------|:----------------------------------------:|
+| Client          | No                                   | No                                       |
+| Client Request  | Yes                                  | No                                       |
+| Server Response | Yes                                  | Yes                                      |
+| Server          | Yes                                  | Yes                                      |
 
 As we can see we are able to get information from interface channels presented as `Request` and `Response`.
 The expected purpose of interface channels is to exchange information between server side and external world - but since it is a way to it is natural source of vector attacks.
@@ -118,3 +118,7 @@ To clean up the demo, simply run `stop.sh`:
 ```bash
 ./stop.sh
 ```
+
+## TODO
+- extend the demo with additional servers implementations (JS, go, Java)
+- extend the demo with proxy as load balancer
